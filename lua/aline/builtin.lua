@@ -106,13 +106,21 @@ local clients_autocmd_exists = false
 M.lsp_clients = make_builtin(function(options)
     if not clients_autocmd_exists
     then
+        local group = api.nvim_create_augroup('aline', { clear = false })
+        api.nvim_create_autocmd('BufEnter', {
+            callback = function()
+                b.lsp_client_names = lsp_client_names()
+                vim.cmd.redrawstatus()
+            end,
+            group = group,
+        })
         api.nvim_create_autocmd('User', {
             pattern = { 'LspAttach', 'LspDetach' },
             callback = function()
                 b.lsp_client_names = lsp_client_names()
                 vim.cmd.redrawstatus()
             end,
-            group = api.nvim_create_augroup('aline', { clear = false }),
+            group = group,
         })
 
         clients_autocmd_exists = true
@@ -159,13 +167,22 @@ local progress_autocmd_exists = false
 M.lsp_progress = make_builtin(function(options)
     if not progress_autocmd_exists
     then
+        local group = api.nvim_create_augroup('aline', { clear = false })
+        api.nvim_create_autocmd('BufEnter', {
+            callback = function()
+                b.lsp_progress = lsp_progress()
+                vim.cmd.redrawstatus()
+            end,
+            group = group,
+        })
+
         api.nvim_create_autocmd('User', {
             pattern = { 'LspProgressUpdate', 'LspRequest' },
             callback = function()
                 b.lsp_progress = lsp_progress()
                 vim.cmd.redrawstatus()
             end,
-            group = api.nvim_create_augroup('aline', { clear = false }),
+            group = group,
         })
 
         progress_autocmd_exists = true
