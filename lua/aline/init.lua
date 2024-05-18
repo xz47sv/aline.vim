@@ -13,14 +13,7 @@ do
 end
 
 M.builtin = setmetatable({}, {
-    __index = function(_, k)
-        if M.lua_builtin[k]
-        then
-            return M.lua_builtin[k]
-        else
-            return M.vim_builtin[k]
-        end
-    end,
+    __index = function(_, k) return M.lua_builtin[k] or M.vim_builtin[k] end,
 })
 
 return M
