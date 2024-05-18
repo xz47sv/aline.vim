@@ -104,7 +104,7 @@ M.lsp_clients = make_builtin(function(options)
             function(v)
                 return not vim.tbl_contains(options.exclude, v)
             end,
-            clients
+            clients or {}
         )
     end
 
