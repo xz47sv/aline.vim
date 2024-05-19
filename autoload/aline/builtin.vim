@@ -148,7 +148,7 @@ function! s:mode(options) abort
         \'text': get(opts, 'text', modes[mode]),
         \'highlight': extend(
             \get(opts, 'highlight', {}),
-            \{ 'attrs': get(a:options, 'attrs', [])}
+            \{ 'attrs': get(a:options, 'attrs', []) }
         \),
     \}
 endfunction
