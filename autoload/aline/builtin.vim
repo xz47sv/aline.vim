@@ -46,7 +46,7 @@ function! s:file(options) abort
     let max_width = floor(winwidth(0) / 100.0 * max_width)
     let fname = expand('%:~:.')
     let length = len(fname)
-    let schema = matchstr('\m^\w://', fname)
+    let schema = matchstr(fname, '\m^\w\+://')
     let fname = fname[len(schema):]
     let is_dir = fname[-1:] ==# '/'
     let segments = split(fname, '/')
