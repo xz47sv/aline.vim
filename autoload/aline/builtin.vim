@@ -46,6 +46,10 @@ function! s:file(options) abort
     let max_width = floor(winwidth(0) / 100.0 * max_width)
     let fname = expand('%:~:.')
     let length = len(fname)
+    if length == 0
+        return {}
+    endif
+
     let schema = matchstr(fname, '\m^\w\+://')
     let fname = fname[len(schema):]
     let is_dir = fname[-1:] ==# '/'
