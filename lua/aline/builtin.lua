@@ -189,16 +189,38 @@ M.lsp_progress = make_builtin(function(options)
     local progress = b.lsp_progress
     if not progress then return nil end
 
-    local title = progress.title and progress.title .. ' ' or ''
-    local msg = progress.message and progress.message .. ' ' or ''
-    local percentage = progress.percentage
-    if not percentage then return nil end
+    -- not exactly sure what causes it but some lsp clients don't send
+    -- LspProgressUpdate clear the last message, do it after a small timeout
+    if progress.done
+    then
+        vim.defer_fn(
+            function()
+                api.nvim_exec_autocmds('User', {
+                    pattern = 'LspProgressUpdate',
+                    modeline = false,
+                })
+            end,
+            500
+        )
+    end
 
-    return {
-        text = (options.format or '%s%s(%s%%)'):format(
-            title, msg, percentage
-        ),
-    }
+    if options.format
+    then
+        return { text = options.format(progress) }
+    else
+        local text = (progress.title and progress.title .. ' ' or '')
+            .. (progress.message and progress.message .. ' ' or '')
+            .. (progress.percentage
+                and '(' .. progress.percentage .. '%)'
+                or '')
+
+        if #text == 0
+        then
+            return nil
+        else
+            return { text = progress.name .. ': ' .. text }
+        end
+    end
 end)
 
 return M
