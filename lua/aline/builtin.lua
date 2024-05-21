@@ -113,10 +113,12 @@ M.lsp_clients = make_builtin(function(options)
         local group = api.nvim_create_augroup('aline', { clear = false })
 
         api.nvim_create_autocmd(
-            'BufEnter', { callback = callback, group = group }
+            { 'LspAttach', 'LspDetach', 'BufEnter' },
+            { callback = callback, group = group }
         )
+
         api.nvim_create_autocmd('User', {
-            pattern = { 'LspAttach', 'LspDetach' },
+            pattern = 'AlineLspReload',
             callback = callback,
             group = group,
         })
@@ -175,7 +177,7 @@ M.lsp_progress = make_builtin(function(options)
             'BufEnter', { callback = callback, group = group }
         )
         api.nvim_create_autocmd('User', {
-            pattern = { 'LspProgressUpdate', 'LspRequest' },
+            pattern = { 'AlineLspReload', 'LspProgressUpdate', 'LspRequest' },
             callback = callback,
             group = group,
         })
