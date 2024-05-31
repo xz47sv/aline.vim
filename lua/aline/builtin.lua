@@ -29,7 +29,6 @@ local M = {}
 local api = vim.api
 local b = vim.b
 local diagnostic = vim.diagnostic
-local fn = vim.fn
 local lsp = vim.lsp
 
 -- mimics s:call_builtin in autoload/aline/builtin.vim
@@ -89,8 +88,12 @@ end
 local ok, devicons = pcall(require, 'nvim-web-devicons')
 if ok
 then
-    M.icon = make_builtin(function()
-        return { text = devicons.get_icon(fn.expand('%t'), b.filetype) }
+    M.icon = make_builtin(function(options)
+        return {
+            text = devicons.get_icon_by_filetype(
+                vim.bo.filetype, { default = options.default }
+            ),
+        }
     end)
 end
 
