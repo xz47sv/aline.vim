@@ -30,7 +30,7 @@ if exists('WebDevIconsGetFileTypeSymbol')
     endfunction
 else
     function! s:icon(_) abort
-        return { 'text': '[NO ICON PROVIDER FOUND]' }
+        return {}
     endfunction
 endif
 
