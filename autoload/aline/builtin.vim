@@ -52,11 +52,12 @@ function! s:file(options) abort
 
     let schema = matchstr(fname, '\m^\w\+://')
     let fname = fname[len(schema):]
-    let is_dir = fname[-1:] ==# '/'
-    let segments = split(fname, '/')
+    let segments = split(fname, '/', 1)
+    let is_dir = segments[-1] ==# ''
 
-    " -2 so we skip the tail
-    for i in range(0, len(segments) - 2)
+    " -3/-2 so we skip the tail, if it's a directory we need to skip one more
+    " because the last segment is blank
+    for i in range(0, len(segments) - (is_dir ? 3 : 2))
         if length <= max_width
             break
         endif
@@ -72,16 +73,12 @@ function! s:file(options) abort
     endif
 
     if length > max_width
-        if is_dir
-            let fname = segments[len(segments) - 1]
-        else
-            let fname = fnamemodify(fname, ':t')
-        endif
+        let fname = segments[-(is_dir ? 2 : 1)]
     else
         let fname = join(segments, '/')
     endif
 
-    return { 'text': schema . fname . (is_dir ? '/' : '') }
+    return { 'text': schema . fname }
 endfunction
 
 function! s:encoding(_) abort
