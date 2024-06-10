@@ -55,6 +55,10 @@ function! s:file(options) abort
     let segments = split(fname, '/', 1)
     let is_dir = segments[-1] ==# ''
 
+    if len(segments) <= 1
+        return { 'text': schema . fname }
+    endif
+
     " -3/-2 so we skip the tail, if it's a directory we need to skip one more
     " because the last segment is blank
     for i in range(0, len(segments) - (is_dir ? 3 : 2))
