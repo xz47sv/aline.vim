@@ -29,6 +29,7 @@ local M = {}
 local api = vim.api
 local b = vim.b
 local diagnostic = vim.diagnostic
+local fn = vim.fn
 local lsp = vim.lsp
 
 -- mimics s:call_builtin in autoload/aline/builtin.vim
@@ -100,7 +101,9 @@ end
 local lsp_client_names = function()
     return vim.tbl_map(
         function(v) return v.name end,
-        lsp.get_active_clients({ bufnr = api.nvim_get_current_buf() })
+        lsp['get_' .. (fn.has('nvim-0.10') and '' or 'active_') .. 'clients'](
+            { bufnr = api.nvim_get_current_buf() }
+        )
     )
 end
 
@@ -148,21 +151,46 @@ M.lsp_clients = make_builtin(function(options)
     return { text = options.icon .. table.concat(clients, options.separator) }
 end)
 
-local lsp_progress = function()
-    local progress = lsp.util.get_progress_messages()[1]
-    if not (
-            progress
-            and not vim.tbl_isempty(
-                lsp.get_active_clients({
-                    bufnr = api.nvim_get_current_buf(),
-                    name = progress.name,
-                })
-            )
-        )
-    then
+-- XXX: rewrite this completely later
+local lsp_progress
+if fn.has('nvim-0.10')
+then
+    lsp_progress = function()
+        for _, client in ipairs(lsp.get_clients({ bufnr = api.nvim_get_current_buf() }))
+        do
+            for progress in client.progress
+            do
+                local value = progress.value
+                if type(value) == 'table' and value.kind
+                then
+                    return vim.tbl_extend(
+                        'force',
+                        { name = client.name, done = value.kind == 'end' },
+                        value
+                    )
+                end
+            end
+        end
+
         return nil
-    else
-        return progress
+    end
+else
+    lsp_progress = function()
+        local progress = lsp.util.get_progress_messages()[1]
+        if not (
+                progress
+                and not vim.tbl_isempty(
+                    lsp.get_active_clients({
+                        bufnr = api.nvim_get_current_buf(),
+                        name = progress.name,
+                    })
+                )
+            )
+        then
+            return nil
+        else
+            return progress
+        end
     end
 end
 
