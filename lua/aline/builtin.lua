@@ -161,7 +161,9 @@ then
             for progress in client.progress
             do
                 local value = progress.value
-                if type(value) == 'table' and value.kind
+                if client.name ~= 'null-ls'
+                    and type(value) == 'table'
+                    and value.kind
                 then
                     return vim.tbl_extend(
                         'force',
