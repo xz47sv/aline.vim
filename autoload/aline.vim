@@ -115,6 +115,11 @@ function! s:make_separator(separator) abort
 endfunction
 
 function! aline#_eval() abort
+    if !has_key(g:, 'actual_curwin')
+        let g:actual_curwin = win_getid()
+        return '%{%aline#_eval()%}'
+    endif
+
     if g:actual_curwin == win_getid()
         let line = g:aline_config.active
     else
@@ -345,5 +350,9 @@ function! aline#setup(...) abort
         \)
     endfor
 
-    set statusline=%{%aline#_eval()%}
+    if has('vim-8.1.1372') || has('nvim-0.5')
+        set statusline=%{%aline#_eval()%}
+    else
+        set statusline=%!aline#_eval()
+    endif
 endfunction
