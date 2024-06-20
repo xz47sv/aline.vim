@@ -142,6 +142,12 @@ function! aline#_eval() abort
                 if s:is_null(Component)
                     continue
                 endif
+
+                " all builtin components return dicts but allow user to just
+                " return string
+                if type(Component) == v:t_string
+                    let Component = { 'text': Component }
+                endif
             elseif has_key(Component, 'enabled')
                 if !Component.enabled()
                     continue
