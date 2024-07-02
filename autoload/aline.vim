@@ -80,12 +80,10 @@ function! s:make_highlight(hl) abort
         \printf('Aline_%s_%s_%s', bg, fg, attrs), '[,#]', '', 'g'
     \)
 
-    if !hlexists(name)
-        execute printf(
-            \'hi! %s guibg=%s guifg=%s gui=%s cterm=%s',
-            \name, bg, fg, attrs, attrs,
-        \)
-    endif
+    execute printf(
+        \'hi! %s guibg=%s guifg=%s gui=%s cterm=%s',
+        \name, bg, fg, attrs, attrs,
+    \)
 
     return name
 endfunction
@@ -126,7 +124,7 @@ function! aline#_eval() abort
         let line = g:aline_config.inactive
     endif
 
-    let default_hl = '%#' . line.highlight . '#'
+    let default_hl = '%#' . s:make_highlight(line.highlight) . '#'
     let statusline = default_hl
 
     let n_sections = len(line.sections)
@@ -246,10 +244,6 @@ function! s:setup_section(section) abort
         return s:setup_section({ 'components': a:section })
     endif
 
-    if has_key(a:section, 'highlight')
-        let a:section.highlight = s:make_highlight(a:section.highlight)
-    endif
-
     call map(a:section.components, { _, c -> s:setup_component(c) })
 
     return a:section
@@ -338,12 +332,10 @@ function! aline#setup(...) abort
             let g:aline_config[k] = { 'sections': g:aline_config[k] }
         endif
 
-        let g:aline_config[k].highlight = s:make_highlight(
-            \get(
-                \g:aline_config[k],
-                \'highlight',
-                \k ==# 'active' ? 'StatusLine' : 'StatusLineNC'
-            \)
+        let g:aline_config[k].highlight = get(
+            \g:aline_config[k],
+            \'highlight',
+            \k ==# 'active' ? 'StatusLine' : 'StatusLineNC'
         \)
 
         call s:setup_separators(g:aline_config[k], g:aline_config)
