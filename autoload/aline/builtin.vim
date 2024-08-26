@@ -45,6 +45,10 @@ function! s:file(options) abort
 
     let max_width = floor(winwidth(0) / 100.0 * max_width)
     let fname = expand('%:~:.')
+    if fname ==# ''
+        return { 'text': '[No Name]' }
+    endif
+
     let length = len(fname)
     if length == 0
         return {}
