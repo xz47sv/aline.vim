@@ -353,4 +353,6 @@ function! aline#setup(...) abort
     else
         set statusline=%!aline#_eval()
     endif
+
+    let g:loaded_aline = v:true
 endfunction
