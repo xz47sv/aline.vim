@@ -91,9 +91,9 @@ if ok
 then
     M.icon = make_builtin(function(options)
         return {
-            text = devicons.get_icon_by_filetype(
-                vim.bo.filetype, { default = options.default }
-            ),
+            text = devicons.get_icon_by_filetype(vim.bo.filetype, {
+                default = options.default
+            }),
         }
     end)
 end
