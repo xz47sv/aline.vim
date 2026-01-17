@@ -114,7 +114,7 @@ M.lsp_clients = make_builtin(function(options)
     then
         local callback = function()
             b.lsp_client_names = lsp_client_names()
-            vim.cmd.redrawstatus()
+            vim.cmd('silent! redrawstatus')
         end
         local group = api.nvim_create_augroup('aline', { clear = false })
 
